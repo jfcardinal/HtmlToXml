@@ -699,7 +699,7 @@ namespace JohnCardinal.Text {
          }
 
          /// <summary>
-         /// Expands the openElements array to accomodate additional items.
+         /// Expands the openElements array to accommodate additional items.
          /// </summary>
          private void ResizeOpenElements() {
             Array.Resize(ref openElements, openElements.Length + kInitialCapacity);
