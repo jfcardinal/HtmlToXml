@@ -209,5 +209,15 @@ namespace HtmlToXmlTest {
          Test("<img src=\"image.jpg\" height='80' width=100>",
               "<img src=\"image.jpg\" height=\"80\" width=\"100\"/>");
       }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void ManyOpenTags() {
+         Test("<div><div><div><div><div><div><div><div><div><div>" +
+              "<div><div><div><div><div><div><div><div><div><div>",
+              "<div><div><div><div><div><div><div><div><div><div>" +
+              "<div><div><div><div><div><div><div><div><div><div>" +
+              "</div></div></div></div></div></div></div></div></div></div>" +
+              "</div></div></div></div></div></div></div></div></div></div>");
+      }
    }
 }
