@@ -104,7 +104,7 @@ namespace JohnCardinal.Text {
       }
 
       /// <summary>
-      /// A dictionary of HTML named entities and their numeric XML entity values.
+      /// A dictionary of HTML named entities and their decimal entity values.
       /// </summary>
       private static Dictionary<string, string> namedEnties = new Dictionary<string, string>() {
          { "amp", "&amp;" },
@@ -394,9 +394,9 @@ namespace JohnCardinal.Text {
             var c = tp.Peek();
             switch (c) {
                case '<':
-                  var element = GetTag();
-                  if (element != null) {
-                     HandleTag(element);
+                  var tag = GetTag();
+                  if (tag != null) {
+                     HandleTag(tag);
                   }
                   break;
 
@@ -537,7 +537,7 @@ namespace JohnCardinal.Text {
       private HtmlTag GetTag() {
          // Handle comment
          if (tp.Peek(1) == '!' && tp.Peek(2) == '-' && tp.Peek(3) == '-') {
-            ReadToEndOfComment();
+            SkipToEndOfComment();
             return null;
          }
 
@@ -552,9 +552,9 @@ namespace JohnCardinal.Text {
       /// </summary>
       /// <remarks>
       /// Uses simple rules: the comment ends at the next
-      /// instance of "-->".
+      /// instance of "--&gt;".
       /// </remarks>
-      private void ReadToEndOfComment() {
+      private void SkipToEndOfComment() {
          tp.MoveAhead(4);
          while (!tp.EndOfText) {
             if (tp.Peek() == '-' && tp.Peek(1) == '-' && tp.Peek(2) == '>') {
@@ -567,7 +567,7 @@ namespace JohnCardinal.Text {
       }
 
       private void HandleEntity() {
-         if (EntityIsHexOrNumeric()) {
+         if (EntityIsHexOrDecimal()) {
             AppendEntityToOutput();
             return;
          }
@@ -603,7 +603,7 @@ namespace JohnCardinal.Text {
       /// <summary>
       /// Appends the entity substring that begins at
       /// the current location, which is assumed to
-      /// be '&', to the output.
+      /// be '&amp;', to the output.
       /// </summary>
       private void AppendEntityToOutput() {
          while (!tp.EndOfText) {
@@ -616,7 +616,7 @@ namespace JohnCardinal.Text {
 
       /// <summary>
       /// Gets a named entity starting at the currrent
-      /// character ('&') and proceeding until ';'.
+      /// character ('&amp;') and proceeding until ';'.
       /// Returns null if the substring does not match
       /// the expected entity sequence.
       /// </summary>
@@ -657,11 +657,11 @@ namespace JohnCardinal.Text {
       /// <summary>
       /// Returns true if the substring starting at
       /// the current position and continuing to
-      /// the next ';' contains a digital or hex
+      /// the next ';' contains a decimal or hex
       /// entity sequence. On entry, tp should be
-      /// pointing at '&'.
+      /// pointing at '&amp;'.
       /// </summary>
-      private bool EntityIsHexOrNumeric() {
+      private bool EntityIsHexOrDecimal() {
          // Handle hex and numeric
          if (tp.Peek(1) == '#') {
             var c = tp.Peek(2);

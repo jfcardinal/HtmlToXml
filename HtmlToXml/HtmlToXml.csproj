@@ -7,6 +7,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
     <Optimize>false</Optimize>
+    <DocumentationFile>bin\Debug\netstandard2.0\HtmlToXml.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\HtmlToXml.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
