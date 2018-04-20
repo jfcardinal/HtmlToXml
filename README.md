@@ -42,26 +42,61 @@ var xmlText = htmlToXml.Convert("<p>This is a test.");
 
 ## Examples
 
-| Input | Output |
-| ----- | ------ |
-| `<p>File > Save As</p>` | `<p>File &gt; Save As</p>` |
-| `<p>Unclosed paragraph.` | `<p>Unclosed paragraph.</p>` |
-| `<p>Paragraph one.<p>Paragraph two.` | `<p>Paragraph one.</p><p>Paragraph two.</p>` |
-| `<p>Unclosed paragraph.<div>Something</div>` | `<p>Unclosed paragraph.</p><div>Something</div>` |
-| `<p>A simple<br/>paragraph.</p>` | `<p>A simple<br/>paragraph.</p>` |
-| `<p>A simple<br>paragraph.</p>` | `<p>A simple<br/>paragraph.</p>` |
-| `<p>Paragraph <b>one.</p>` | `<p>Paragraph <b>one.</b></p>` |
-| `<ul><li>Item 1<li>Item 2</ul>` | `<ul><li>Item 1</li><li>Item 2</li></ul>` |
-| `<ul><li>Item 1<li>Item 2` | `<ul><li>Item 1</li><li>Item 2</li></ul>` |
-| `<ul><li>Item 1<li>Item 2<div>Here` | `<ul><li>Item 1</li><li>Item 2<div>Here</div></li></ul>` |
-| `<ul><li>Item 1<ul><li>Item 1.1</li></ul><li>Item 2</li></ul>` | `<ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>` |
-| `<ul><li>Item 1<ul><li>Item 1.1</ul><li>Item 2</li></ul>` | `<ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>` |
-| `<p>Extra.&nbsp; Spacing.</p>` | `<p>Extra.&#160; Spacing.</p>` |
-| `<p>You <!--ain't-->got it.</p>` | `<p>You got it.</p>` |
-| `<img alt="" height=1 width=1 src="image.jpg">` | `<img height="1" width="1" src="image.jpg"/>` |
-| `<a href="foo?doo&ret=no">Text</a>` | `<a href="foo?doo&amp;ret=no">Text</a>` |
-| `<p><o>test</o></p>` | `<p></p><o>test</o>` |
-| `<p><o:p>test</o:p></p>` | `<p><o:p>test</o:p></p>` |
+```html
+I: <p>File > Save As</p>
+O: <p>File &gt; Save As</p>
+
+I: <p>Unclosed paragraph.
+O: <p>Unclosed paragraph.</p>
+
+I: <p>Paragraph one.<p>Paragraph two.
+O: <p>Paragraph one.</p><p>Paragraph two.</p>
+
+I: <p>Unclosed paragraph.<div>Something</div>
+O: <p>Unclosed paragraph.</p><div>Something</div>
+
+I: <p>A simple<br/>paragraph.</p>
+O: <p>A simple<br/>paragraph.</p>
+
+I: <p>A simple<br>paragraph.</p>
+O: <p>A simple<br/>paragraph.</p>
+
+I: <p>Paragraph <b>one.</p>
+O: <p>Paragraph <b>one.</b></p>
+
+I: <ul><li>Item 1<li>Item 2</ul>
+O: <ul><li>Item 1</li><li>Item 2</li></ul>
+
+I: <ul><li>Item 1<li>Item 2
+O: <ul><li>Item 1</li><li>Item 2</li></ul>
+
+I: <ul><li>Item 1<li>Item 2<div>Here
+O: <ul><li>Item 1</li><li>Item 2<div>Here</div></li></ul>
+
+I: <ul><li>Item 1<ul><li>Item 1.1</li></ul><li>Item 2</li></ul>
+O: <ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>
+
+I: <ul><li>Item 1<ul><li>Item 1.1</ul><li>Item 2</li></ul>
+O: <ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>
+
+I: <p>Extra.&nbsp; Spacing.</p>
+O: <p>Extra.&#160; Spacing.</p>
+
+I: <p>You <!--ain't-->got it.</p>
+O: <p>You got it.</p>
+
+I: <img alt="" height=1 width=1 src="image.jpg">
+O: <img height="1" width="1" src="image.jpg"/>
+
+I: <a href="foo?doo&ret=no">Text</a>
+O: <a href="foo?doo&amp;ret=no">Text</a>
+
+I: <p><o>test</o></p>
+O: <p></p><o>test</o>
+
+I: <p><o:p>test</o:p></p>
+O: <p><o:p>test</o:p></p>
+```
 
 ## Credits
 
