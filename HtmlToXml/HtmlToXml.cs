@@ -548,7 +548,7 @@ namespace JohnCardinal.Text {
       }
 
       /// <summary>
-      /// Reads all the characters in an HTML comment.
+      /// Skips over all the characters in an HTML comment.
       /// </summary>
       /// <remarks>
       /// Uses simple rules: the comment ends at the next
@@ -566,6 +566,9 @@ namespace JohnCardinal.Text {
          return;
       }
 
+      /// <summary>
+      /// Validates an HTML entity and appends it to the output.
+      /// </summary>
       private void HandleEntity() {
          if (EntityIsHexOrDecimal()) {
             AppendEntityToOutput();
@@ -584,6 +587,12 @@ namespace JohnCardinal.Text {
          tp.MoveAhead();
       }
 
+      /// <summary>
+      /// If the given named <paramref name="entity"/> is recognized, its
+      /// decimal value is appended to the output. Otherwise, the '&amp;'
+      /// is converted to '&amp;amp;' and the remaining text is appended
+      /// as-is.
+      /// </summary>
       private void AppendEntityValue(string entity) {
          if (namedEnties.TryGetValue(entity, out string value)) {
             sb.Append(value);
