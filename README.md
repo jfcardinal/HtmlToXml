@@ -183,6 +183,13 @@ O: <table><th>H1</th><th>H2</th><tbody><td>C1
    <td>C2</td></tbody></table>
 ```
 
+Text inside SCRIPT and STYLE elements is wrapped in `<![CDATA[` and `]]>` to hide text that does not follow XML rules.
+
+```html
+I: <style>p > em { color:red; }</style>
+O: <style><![CDATA[p > em { color:red; }]]></style>
+```
+
 ## Credits
 
 Includes a modified version of [TextParser](http://www.blackbeltcoder.com/Articles/strings/a-text-parsing-helper-class), a class originally written by Jonathan Wood.

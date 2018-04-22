@@ -14,36 +14,6 @@ namespace HtmlToXml {
       private static char[] restrictedCharacters = new char[] { '<', '>', '&' };
 
       /// <summary>
-      /// voidElements should be self-closed.
-      /// </summary>
-      private static List<string> voidElements = new List<string> {
-         "area",
-         "base",
-         "br",
-         "col",
-         "command",
-         "embed",
-         "hr",
-         "img",
-         "input",
-         "keygen",
-         "link",
-         "meta",
-         "param",
-         "source",
-         "track",
-         "wbr"
-      };
-
-      /// <summary>
-      /// Returns true if the given <paramref name="elementName"/> represents
-      /// a void element that requires a self-closing tag.
-      /// </summary>
-      public static bool IsVoidElement(string elementName) {
-         return voidElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
-      }
-
-      /// <summary>
       /// A list of inline elements; all other elements are considered
       /// block elements except element names with a namespace.
       /// </summary>
@@ -95,6 +65,52 @@ namespace HtmlToXml {
       public static bool IsInlineElement(string elementName) {
          if (elementName.Contains(':')) return true;
          return inlineElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
+      }
+
+      /// <summary>
+      /// Some elements may contain non-XML text.
+      /// </summary>
+      private static List<string> cDataElements = new List<string> {
+         "script",
+         "style",
+      };
+
+      /// <summary>
+      /// Returns true if the given <paramref name="elementName"/> represents
+      /// a void element that requires a self-closing tag.
+      /// </summary>
+      public static bool IsCDataElement(string elementName) {
+         return cDataElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
+      }
+
+      /// <summary>
+      /// voidElements should be self-closed.
+      /// </summary>
+      private static List<string> voidElements = new List<string> {
+         "area",
+         "base",
+         "br",
+         "col",
+         "command",
+         "embed",
+         "hr",
+         "img",
+         "input",
+         "keygen",
+         "link",
+         "meta",
+         "param",
+         "source",
+         "track",
+         "wbr"
+      };
+
+      /// <summary>
+      /// Returns true if the given <paramref name="elementName"/> represents
+      /// a void element that requires a self-closing tag.
+      /// </summary>
+      public static bool IsVoidElement(string elementName) {
+         return voidElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
       }
 
       /// <summary>
@@ -197,6 +213,10 @@ namespace HtmlToXml {
             openElements.Push(tag.Name);
          }
          sb.Append('>');
+
+         if (IsCDataElement(tag.Name)) {
+            SkipToEndOfCData(tag.Name);
+         }
       }
 
       private void ProcessHandlers(string currentElementName) {
@@ -291,10 +311,45 @@ namespace HtmlToXml {
       }
 
       /// <summary>
+      /// Skips all characters until the end tag for the given
+      /// <paramref name="tagName"/>.
+      /// </summary>
+      /// <remarks>
+      /// Uses a simple rule: the CData ends at the next
+      /// instance of the end tag. An end that appears in 
+      /// the text of the tag--not sure if that can
+      /// happen, but maybe--will be treated as the end.
+      /// </remarks>
+      private void SkipToEndOfCData(string tagName) {
+         const string kCDataStart = "<![CDATA[";
+         const string kCDataEnd = "]]>";
+         var endOffset = tagName.Length + 2;
+         var haveCData = false;
+
+         while (!tp.EndOfText) {
+            if (tp.Peek() == '<' && tp.Peek(1) == '/' && tp.Peek(endOffset) == '>') {
+               var endTag = tp.Substring(tp.Position + 2, tagName.Length);
+               if (endTag.Equals(tagName, StringComparison.OrdinalIgnoreCase)) {
+                  break;
+               }
+            }
+            if (!haveCData) {
+               haveCData = true;
+               sb.Append(kCDataStart);
+            }
+            sb.Append(tp.Peek());
+            tp.MoveAhead();
+         }
+
+         if (haveCData) sb.Append(kCDataEnd);
+         return;
+      }
+
+      /// <summary>
       /// Skips over all the characters in an HTML comment.
       /// </summary>
       /// <remarks>
-      /// Uses simple rules: the comment ends at the next
+      /// Uses a simple rule: the comment ends at the next
       /// instance of "--&gt;".
       /// </remarks>
       private void SkipToEndOfComment() {

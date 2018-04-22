@@ -277,11 +277,22 @@ namespace HtmlToXmlTest {
                + "<body><h1>Heading</h1></body></html>");
       }
 
-
       [TestMethod, TestCategory("HtmlToXml")]
       public void IgnoreDocType() {
          Test("<!DOCTYPE html><html><body><h1>Heading",
               "<html><body><h1>Heading</h1></body></html>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void ScriptNoCData() {
+         Test("<script href=\"script.js\"></script>",
+              "<script href=\"script.js\"></script>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void ScriptWithCData() {
+         Test("<script>var x = 0;</script>",
+              "<script><![CDATA[var x = 0;]]></script>");
       }
    }
 }

@@ -131,6 +131,7 @@ namespace JohnCardinal.Text {
       /// <param name="start">Zero origin starting position of the substring.</param>
       /// <returns>The substring starting at the indicated position.</returns>
       public string Substring(int start) {
+         if (start >= text.Length) return String.Empty;
          return text.Substring(start);
       }
 
@@ -141,6 +142,8 @@ namespace JohnCardinal.Text {
       /// <param name="length">Number of characters to extract.</param>
       /// <returns></returns>
       public string Substring(int start, int length) {
+         length = Math.Min(length, text.Length - start);
+         if (start >= text.Length) return String.Empty;
          return text.Substring(start, length);
       }
 
