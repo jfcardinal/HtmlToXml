@@ -28,14 +28,11 @@ namespace HtmlToXml {
             if (openElement.Equals(Name)) break;
          }
 
-         for (var index = openElements.Count; index > 0; index--) {
-            var openElement = openElements[index - 1];
-            if (closers.Contains(childName)) {
-               if (peers.Contains(childName)) {
-                  return ElementHandlerResult.CloseElementAndBreak;
-               }
-               return ElementHandlerResult.CloseElement;
+         if (closers.Contains(childName)) {
+            if (peers.Contains(childName)) {
+               return ElementHandlerResult.CloseElementAndBreak;
             }
+            return ElementHandlerResult.CloseElement;
          }
 
          return ElementHandlerResult.Continue;
