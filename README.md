@@ -166,6 +166,23 @@ The `<o:p>` tag does not close the P element
 because an unknown element with a namespace is
 treated as an inline element.
 
+```html
+I: <table><th>H1<th>H2<tbody><td>C1<td>C2
+O: <table><th>H1</th><th>H2</th><tbody><td>C1</td><td>C2</td></tbody></table>
+```
+
+Unclosed table cells (TD and TH) are closed.
+
+```html
+I: <table><th>H1<th>H2<tbody><td>C1
+   <table><tr><td>T2.C1</table><td>C2</table>
+O: <table><th>H1</th><th>H2</th><tbody><td>C1
+   <table><tr><td>T2.C1</td></tr></table></td>
+   <td>C2</td></tbody></table>
+```
+
+Nested tables are handled properly as long as the nested tables are closed. 
+
 ## Credits
 
 Includes a modified version of [TextParser](http://www.blackbeltcoder.com/Articles/strings/a-text-parsing-helper-class), a class originally written by Jonathan Wood.
