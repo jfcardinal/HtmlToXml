@@ -1,16 +1,16 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using JohnCardinal.Text;
+using HtmlToXml;
 
 namespace HtmlToXmlTest {
    [TestClass]
    public class HtmlToXmlTests {
-      private static HtmlToXml htmlToXml;
+      private static HtmlConverter htmlToXml;
 
       [ClassInitialize()]
       public static void ClassInitializer(TestContext testContext) {
-         htmlToXml = new HtmlToXml();
+         htmlToXml = new HtmlConverter();
       }
 
       public static void Test(string input, string expectedResult) {
@@ -115,6 +115,12 @@ namespace HtmlToXmlTest {
       }
 
       [TestMethod, TestCategory("HtmlToXml")]
+      public void ListNestedMixed() {
+         Test("<ul><li>Item 1<ol><li>Item 1.1</li></ol><li>Item 2</li></ul>",
+              "<ul><li>Item 1<ol><li>Item 1.1</li></ol></li><li>Item 2</li></ul>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
       public void ListNestedUnclosedItem() {
          Test("<ul><li>Item 1<ul><li>Item 1.1</ul><li>Item 2</li></ul>",
               "<ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>");
@@ -213,11 +219,63 @@ namespace HtmlToXmlTest {
       [TestMethod, TestCategory("HtmlToXml")]
       public void ManyOpenTags() {
          Test("<div><div><div><div><div><div><div><div><div><div>" +
-              "<div><div><div><div><div><div><div><div><div><div>",
+                  "<div><div><div><div><div><div><div><div><div><div>",
               "<div><div><div><div><div><div><div><div><div><div>" +
-              "<div><div><div><div><div><div><div><div><div><div>" +
-              "</div></div></div></div></div></div></div></div></div></div>" +
-              "</div></div></div></div></div></div></div></div></div></div>");
+                  "<div><div><div><div><div><div><div><div><div><div>" +
+                  "</div></div></div></div></div></div></div></div></div></div>" +
+                  "</div></div></div></div></div></div></div></div></div></div>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TableDataUnclosed() {
+         Test("<table><tr><td>C1<td>C2",
+              "<table><tr><td>C1</td><td>C2</td></tr></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TableHeadingUnclosed() {
+         Test("<table><tr><th>H1<th>H2",
+              "<table><tr><th>H1</th><th>H2</th></tr></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TableCellsUnclosed() {
+         Test("<table><th>H1<th>H2<tbody><td>C1<td>C2",
+              "<table><th>H1</th><th>H2</th><tbody><td>C1</td><td>C2</td></tbody></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TableCellsMixedUnclosed() {
+         Test("<table><th>H1<td>C1<tbody><td>C2<th>H2",
+              "<table><th>H1</th><td>C1</td><tbody><td>C2</td><th>H2</th></tbody></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TableRowUnclosed() {
+         Test("<table><tr><td>R1C1<td>R1C2<tr><td>R2C1<td>R2C2</table>",
+              "<table><tr><td>R1C1</td><td>R1C2</td></tr>"
+               + "<tr><td>R2C1</td><td>R2C2</td></tr></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void TablesNested() {
+         Test("<table><th>H1<th>H2<tbody><td>C1<table><tr><td>T2.C1</table><td>C2</table>",
+              "<table><th>H1</th><th>H2</th><tbody><td>C1"
+               + "<table><tr><td>T2.C1</td></tr></table></td><td>C2</td></tbody></table>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void HeadNotClosed() {
+         Test("<html><head><meta charset=\"UTF-8\"><body><h1>Heading",
+              "<html><head><meta charset=\"UTF-8\"/></head>"
+               + "<body><h1>Heading</h1></body></html>");
+      }
+
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void IgnoreDocType() {
+         Test("<!DOCTYPE html><html><body><h1>Heading",
+              "<html><body><h1>Heading</h1></body></html>");
       }
    }
 }
