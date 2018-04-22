@@ -127,6 +127,12 @@ namespace HtmlToXmlTest {
       }
 
       [TestMethod, TestCategory("HtmlToXml")]
+      public void DictItemsUnclosed() {
+         Test("<dl><dt>DT1<dd>DD1",
+              "<dl><dt>DT1</dt><dd>DD1</dd></dl>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
       public void ParagraphWithMDash() {
          Test("<p>What will an entity&ndash;any entity&mdash;yield?</p>",
               "<p>What will an entity&#8211;any entity&#8212;yield?</p>");

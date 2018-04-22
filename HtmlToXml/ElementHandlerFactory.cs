@@ -19,6 +19,10 @@ namespace HtmlToXml {
          }
 
          switch (elementName) {
+            case "dd":
+            case "dt":
+               return AddHandlerToCache(elementName, GetDictionaryItemHandler);
+
             case "li":
                return AddHandlerToCache(elementName, GetListItemHandler);
 
@@ -70,6 +74,19 @@ namespace HtmlToXml {
       private IElementHandler GetListItemHandler(string elementName) {
          return new NestedElementHandler(elementName, listItemPeers,
             litItemParents, listItemPeers);
+      }
+
+      #endregion
+
+      #region DL, DT, DD
+
+      private static string[] dictItemParents = new[] { "dl" };
+
+      private static string[] dictItemPeers = new[] { "dt", "dd" };
+
+      private IElementHandler GetDictionaryItemHandler(string elementName) {
+         return new NestedElementHandler(elementName, dictItemPeers,
+            dictItemParents, dictItemPeers);
       }
 
       #endregion
