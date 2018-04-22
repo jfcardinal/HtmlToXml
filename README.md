@@ -44,41 +44,35 @@ var xmlText = html.Convert("<p>This is a test.");
 
 ## Examples
 
-```html
-I: <p>File > Save As</p>
-O: <p>File &gt; Save As</p>
-```
-
 A `'>'` character that is not used to end a tag
 is encoded.
 
 ```html
-I: <p>Unclosed paragraph.
-O: <p>Unclosed paragraph.</p>
+I: <p>File > Save As</p>
+O: <p>File &gt; Save As</p>
 ```
 
 Any open elements are closed when the end of the
 input is reached.
 
 ```html
-I: <p>Paragraph one.<p>Paragraph two.
-O: <p>Paragraph one.</p><p>Paragraph two.</p>
+I: <p>Unclosed paragraph.
+O: <p>Unclosed paragraph.</p>
 ```
 
 Open paragraph elements are closed when the next
 block element is encountered.
 
 ```html
-I: <p>A simple<br>paragraph.</p>
-O: <p>A simple<br/>paragraph.</p>
+I: <p>Paragraph one.<p>Paragraph two.
+O: <p>Paragraph one.</p><p>Paragraph two.</p>
 ```
 
 BR elements and other void elements become
 self-closing XML elements.
-</p>
 
 ```html
-I: <p>A simple<br />paragraph.</p>
+I: <p>A simple<br>paragraph.</p>
 O: <p>A simple<br/>paragraph.</p>
 ```
 
@@ -86,8 +80,8 @@ HTML that is already valid XML is left unchanged, though
 minor variations may be introduced.
 
 ```html
-I: <p>Paragraph <b>one.</p>
-O: <p>Paragraph <b>one.</b></p>
+I: <p>A simple<br />paragraph.</p>
+O: <p>A simple<br/>paragraph.</p>
 ```
 
 Inline elements inside a block element are closed
@@ -95,21 +89,29 @@ when the block ends, but not because they are inline
 elements. They are closed to honor XML's nesting rules.
 
 ```html
-I: <ul><li>Item 1<li>Item 2</ul>
-O: <ul><li>Item 1</li><li>Item 2</li></ul>
+I: <p>Paragraph <b>one.</p>
+O: <p>Paragraph <b>one.</b></p>
 ```
 
 Open LI elements are closed when its next sibling
 is opened.
 
 ```html
-I: <ul><li>Item 1<li>Item 2<div>Here
-O: <ul><li>Item 1</li><li>Item 2<div>Here</div></li></ul>
+I: <ul><li>Item 1<li>Item 2</ul>
+O: <ul><li>Item 1</li><li>Item 2</li></ul>
 ```
 
 An open LI element is not closed by any block element,
 only by a sibling LI. The DIV above is inside the prior
 LI.
+
+```html
+I: <ul><li>Item 1<li>Item 2<div>Here
+O: <ul><li>Item 1</li><li>Item 2<div>Here</div></li></ul>
+```
+
+Nested lists will be handled properly as long as the
+start and end tags for the lists (UL or OL) are present.
 
 ```html
 I: <ul><li>Item 1<ul><li>Item 1.1</li></ul><li>Item 2</li></ul>
@@ -119,47 +121,40 @@ I: <ul><li>Item 1<ul><li>Item 1.1</ul><li>Item 2</li></ul>
 O: <ul><li>Item 1<ul><li>Item 1.1</li></ul></li><li>Item 2</li></ul>
 ```
 
-Nested lists will be handled properly as long as the
-start and end tags for the lists (UL or OL) are present.
+Named HTML entities are converted to decimal entities.
 
 ```html
 I: <p>Extra.&nbsp; Spacing.</p>
 O: <p>Extra.&#160; Spacing.</p>
 ```
 
-Named HTML entities are converted to decimal entities.
+HTML comments are removed.
 
 ```html
 I: <p>You <!--ain't-->got it.</p>
 O: <p>You got it.</p>
 ```
 
-HTML comments are removed.
+Unquoted parameter values are quoted.
 
 ```html
 I: <img alt="" height=1 width=1 src="image.jpg">
 O: <img alt="" height="1" width="1" src="image.jpg"/>
 ```
-Unquoted parameter values are quoted.
+
+Unencoded ampersands in parameter values are encoded.
 
 ```html
 I: <a href="foo?doo&ret=no">Text</a>
 O: <a href="foo?doo&amp;ret=no">Text</a>
 ```
 
-Unencoded ampersands in parameter values are encoded.
-
-```html
-I: <p><o>test</o></p>
-O: <p></p><o>test</o>
-```
-
 The `<o>` tag closes the P element because an
 unknown element is treated as a block element.
 
 ```html
-I: <p><o:p>test</o:p></p>
-O: <p><o:p>test</o:p></p>
+I: <p><o>test</o></p>
+O: <p></p><o>test</o>
 ```
 
 The `<o:p>` tag does not close the P element
@@ -167,11 +162,18 @@ because an unknown element with a namespace is
 treated as an inline element.
 
 ```html
+I: <p><o:p>test</o:p></p>
+O: <p><o:p>test</o:p></p>
+```
+
+Unclosed table cells (TD and TH) are closed.
+
+```html
 I: <table><th>H1<th>H2<tbody><td>C1<td>C2
 O: <table><th>H1</th><th>H2</th><tbody><td>C1</td><td>C2</td></tbody></table>
 ```
 
-Unclosed table cells (TD and TH) are closed.
+Nested tables are handled properly as long as the nested tables are closed. 
 
 ```html
 I: <table><th>H1<th>H2<tbody><td>C1
@@ -180,8 +182,6 @@ O: <table><th>H1</th><th>H2</th><tbody><td>C1
    <table><tr><td>T2.C1</td></tr></table></td>
    <td>C2</td></tbody></table>
 ```
-
-Nested tables are handled properly as long as the nested tables are closed. 
 
 ## Credits
 
