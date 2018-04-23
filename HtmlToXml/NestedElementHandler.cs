@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using JohnCardinal.Utility;
 
 namespace HtmlToXml {
    /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace HtmlToXml {
+﻿using JohnCardinal.Utility;
+
+namespace HtmlToXml {
    /// <summary>
    /// An <see cref="IElementHandler"/> implements behavior that is specific
    /// to a particular HTML element.

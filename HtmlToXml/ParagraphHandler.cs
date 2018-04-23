@@ -1,4 +1,6 @@
-﻿namespace HtmlToXml {
+﻿using JohnCardinal.Utility;
+
+namespace HtmlToXml {
    /// <summary>
    /// <see cref="ParagraphHandler"/> closes an open paragraph element
    /// upon the addition of any non-inline element.
