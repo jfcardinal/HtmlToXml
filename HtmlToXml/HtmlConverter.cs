@@ -89,7 +89,7 @@ namespace HtmlToXml {
       /// </summary>
       public static bool IsScriptCDataElement(string elementName) {
          return (elementName.Equals("script", StringComparison.OrdinalIgnoreCase) ||
-            elementName.Equals("script", StringComparison.OrdinalIgnoreCase));
+            elementName.Equals("style", StringComparison.OrdinalIgnoreCase));
       }
 
       /// <summary>
@@ -293,8 +293,9 @@ namespace HtmlToXml {
             return null;
          }
 
+         // Handle DOCTYPE or other <! ... >
          if (tp.Peek(1) == '!') {
-            SkipToEndOfTag();
+            SkipToEndOfTag(true);
             return null;
          }
 
@@ -310,12 +311,22 @@ namespace HtmlToXml {
       /// <remarks>
       /// Used to skip "&lt;! ... &gt;", including "&lt;!DOCTYPE ... &gt;".
       /// </remarks>
-      private void SkipToEndOfTag() {
+      private void SkipToEndOfTag(bool skipTrailingNewLine) {
          while (!tp.EndOfText) {
             tp.MoveAhead();
             if (tp.Peek() == '>') break;
          }
          tp.MoveAhead();
+
+         if (skipTrailingNewLine) {
+            while (!tp.EndOfText) {
+               var c = tp.Peek();
+               if (c != '\r' && c != '\n') {
+                  break;
+               }
+               tp.MoveAhead();
+            }
+         }
          return;
       }
 

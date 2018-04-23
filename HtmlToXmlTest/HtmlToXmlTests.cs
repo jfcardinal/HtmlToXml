@@ -294,5 +294,11 @@ namespace HtmlToXmlTest {
          Test("<script>var x = 0;</script>",
               "<script>/*<![CDATA[*/var x = 0;/*]]>*/</script>");
       }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void StyleWithCData() {
+         Test("<style>p > em { color:red; }</style>",
+              "<style>/*<![CDATA[*/p > em { color:red; }/*]]>*/</style>");
+      }
    }
 }
