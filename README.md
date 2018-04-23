@@ -29,6 +29,8 @@ The secondary goal is to produce XHTML that mimics what a web browser would rend
 
 - Removes the DOCTYPE statement.
 
+- Wraps text inside SCRIPT and STYLE elements inside CDATA tags which are themselves wrapped in /* to */. That makes the text valid in both XHTML and HTML contexts.
+
 - Treats elements with unrecognized names as block elements, except for   names that include a namespace, which are treated as inline elements. This affects unclosed paragraph processing: `<o>` will close an open paragraph, but `<o:p>` will not.
 
 ## Usage
@@ -41,6 +43,8 @@ var xmlText = html.Convert("<p>This is a test.");
 ```
 
 `xmlText` would equal "`<p>This is a test.</p>`" on output.
+
+HtmlConverter works with HTML substrings. If the input to HtmlConverter.Convert is not wrapped in the HTML element ("`<html> ... </html>`"), the result may or may not have an outer element that encloses the remaining elements. Before you load the result into XmlDocument or XDocument, you may have to wrap it with a document element.
 
 ## Examples
 
@@ -102,7 +106,7 @@ O: <ul><li>Item 1</li><li>Item 2</li></ul>
 ```
 
 An open LI element is not closed by any block element,
-only by a sibling LI. The DIV above is inside the prior
+only by a sibling LI. The DIV is a child of the prior
 LI.
 
 ```html
