@@ -22,7 +22,7 @@ namespace HtmlToXml {
       /// A list of inline elements; all other elements are considered
       /// block elements except element names with a namespace.
       /// </summary>
-      private static List<string> inlineElements = new List<string> {
+      private static HashSet<string> inlineElements = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
          "a",
          "abbr",
          "acronym",
@@ -68,30 +68,34 @@ namespace HtmlToXml {
       /// elements.
       /// </remarks>
       public static bool IsInlineElement(string elementName) {
-         if (elementName.Contains(':')) return true;
-         return inlineElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
+         if (elementName.IndexOf(':') != -1) return true;
+         return inlineElements.Contains(elementName);
       }
 
       /// <summary>
-      /// Some elements may contain non-XML text.
+      /// Returns true if the given <paramref name="elementName"/> represents
+      /// an HTML element whose text should be wrapped in the CDATA start
+      /// and end tags.
       /// </summary>
-      private static List<string> cDataElements = new List<string> {
-         "script",
-         "style",
-      };
+      public static bool IsCDataElement(string elementName) {
+         return IsScriptCDataElement(elementName);
+      }
 
       /// <summary>
       /// Returns true if the given <paramref name="elementName"/> represents
-      /// a void element that requires a self-closing tag.
+      /// an HTML element whose text should be wrapped in the CDATA start
+      /// and end tags that are further wrapped by /* and */ to avoid issues
+      /// if the XHTML is read in an HTML context.
       /// </summary>
-      public static bool IsCDataElement(string elementName) {
-         return cDataElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
+      public static bool IsScriptCDataElement(string elementName) {
+         return (elementName.Equals("script", StringComparison.OrdinalIgnoreCase) ||
+            elementName.Equals("script", StringComparison.OrdinalIgnoreCase));
       }
 
       /// <summary>
       /// voidElements should be self-closed.
       /// </summary>
-      private static List<string> voidElements = new List<string> {
+      private static HashSet<string> voidElements = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
          "area",
          "base",
          "br",
@@ -115,7 +119,7 @@ namespace HtmlToXml {
       /// a void element that requires a self-closing tag.
       /// </summary>
       public static bool IsVoidElement(string elementName) {
-         return voidElements.Contains(elementName, StringComparer.OrdinalIgnoreCase);
+         return voidElements.Contains(elementName);
       }
 
       /// <summary>
@@ -219,8 +223,8 @@ namespace HtmlToXml {
          }
          sb.Append('>');
 
-         if (IsCDataElement(tag.Name)) {
-            SkipToEndOfCData(tag.Name);
+         if (IsScriptCDataElement(tag.Name)) {
+            SkipToEndOfScriptCData(tag.Name);
          }
       }
 
@@ -325,7 +329,7 @@ namespace HtmlToXml {
       /// the text of the tag--not sure if that can
       /// happen, but maybe--will be treated as the end.
       /// </remarks>
-      private void SkipToEndOfCData(string tagName) {
+      private void SkipToEndOfScriptCData(string tagName) {
          var endOffset = tagName.Length + 2;
          var haveCData = false;
 
