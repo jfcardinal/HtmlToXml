@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 using JohnCardinal.Text;
+using JohnCardinal.Utility;
 
 namespace HtmlToXml {
    /// <summary>

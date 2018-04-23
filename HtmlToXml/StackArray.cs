@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HtmlToXml {
+namespace JohnCardinal.Utility {
    /// <summary>
    /// Mantains a simple LIFO stack that provides a count and
    /// where items in the stack can be accessed via their index.
