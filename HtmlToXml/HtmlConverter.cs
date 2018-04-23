@@ -13,6 +13,11 @@ namespace HtmlToXml {
    public sealed class HtmlConverter {
       private static char[] restrictedCharacters = new char[] { '<', '>', '&' };
 
+      // These constants are used to start and end CDATA sections
+      // when used inside SCRIPT and STYLE elements.
+      private const string kScriptCDataStart = "/*<![CDATA[*/";
+      private const string kScriptCDataEnd = "/*]]>*/";
+
       /// <summary>
       /// A list of inline elements; all other elements are considered
       /// block elements except element names with a namespace.
@@ -321,8 +326,6 @@ namespace HtmlToXml {
       /// happen, but maybe--will be treated as the end.
       /// </remarks>
       private void SkipToEndOfCData(string tagName) {
-         const string kCDataStart = "<![CDATA[";
-         const string kCDataEnd = "]]>";
          var endOffset = tagName.Length + 2;
          var haveCData = false;
 
@@ -335,13 +338,13 @@ namespace HtmlToXml {
             }
             if (!haveCData) {
                haveCData = true;
-               sb.Append(kCDataStart);
+               sb.Append(kScriptCDataStart);
             }
             sb.Append(tp.Peek());
             tp.MoveAhead();
          }
 
-         if (haveCData) sb.Append(kCDataEnd);
+         if (haveCData) sb.Append(kScriptCDataEnd);
          return;
       }
 

@@ -292,7 +292,7 @@ namespace HtmlToXmlTest {
       [TestMethod, TestCategory("HtmlToXml")]
       public void ScriptWithCData() {
          Test("<script>var x = 0;</script>",
-              "<script><![CDATA[var x = 0;]]></script>");
+              "<script>/*<![CDATA[*/var x = 0;/*]]>*/</script>");
       }
    }
 }
