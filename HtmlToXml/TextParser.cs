@@ -2,7 +2,7 @@
 
 namespace JohnCardinal.Text {
    /// <summary>
-   /// Utility class for character-by-character text parsing.
+   /// Utility class for character-by-character parsing of a text string.
    /// </summary>
    /// <remarks>
    /// Derived from TextParser by Jonathan Wood and published under the
@@ -20,7 +20,7 @@ namespace JohnCardinal.Text {
    /// For the version included with HtmlToXml, any methods not used by HtmlToXml
    /// were removed.
    /// </remarks>
-   public sealed class TextParser {
+   public sealed class TextParser : ITextParser {
       /// <summary>
       /// '\0', a fence character while parsing, and the result when
       /// reading past the end of the text.
@@ -95,7 +95,7 @@ namespace JohnCardinal.Text {
       /// or a null character if the specified position is at the end of the
       /// text.
       /// </summary>
-      /// <returns>The character at the specified position.</returns>
+      /// <returns>The character at the current position.</returns>
       public char Peek() {
          if (pos < text.Length) return text[pos];
          return NullChar;
@@ -140,7 +140,7 @@ namespace JohnCardinal.Text {
       /// </summary>
       /// <param name="start">Zero origin starting position with the text being parsed.</param>
       /// <param name="length">Number of characters to extract.</param>
-      /// <returns></returns>
+      /// <returns>The substring starting at the indicated position for (at most) the given length.</returns>
       public string Substring(int start, int length) {
          length = Math.Min(length, text.Length - start);
          if (start >= text.Length) return String.Empty;

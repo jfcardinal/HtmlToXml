@@ -12,7 +12,7 @@ namespace HtmlToXml {
       /// <summary>
       /// Validates an HTML entity and appends it to the output.
       /// </summary>
-      public static void Convert(TextParser tp, StringBuilder sb) {
+      public static void Convert(ITextParser tp, StringBuilder sb) {
          if (EntityIsHexOrDecimal(tp)) {
             AppendEntityToOutput(tp, sb);
             return;
@@ -57,7 +57,7 @@ namespace HtmlToXml {
       /// the current location, which is assumed to
       /// be '&amp;', to the output.
       /// </summary>
-      private static void AppendEntityToOutput(TextParser tp, StringBuilder sb) {
+      private static void AppendEntityToOutput(ITextParser tp, StringBuilder sb) {
          while (!tp.EndOfText) {
             var c = tp.Peek();
             sb.Append(c);
@@ -72,7 +72,7 @@ namespace HtmlToXml {
       /// Returns null if the substring does not match
       /// the expected entity sequence.
       /// </summary>
-      private static string GetNamedEntity(TextParser tp) {
+      private static string GetNamedEntity(ITextParser tp) {
          const string kValidCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
          var startPos = tp.Position + 1;
@@ -97,7 +97,7 @@ namespace HtmlToXml {
       /// and continuing to the next ';' contains characters
       /// from "validChars" only.
       /// </summary>
-      private static bool EntityContainsValidCharacters(TextParser tp, int offset, string validChars) {
+      private static bool EntityContainsValidCharacters(ITextParser tp, int offset, string validChars) {
          char c;
          while ((c = tp.Peek(offset++)) != TextParser.NullChar) {
             if (validChars.IndexOf(c) == -1) return false;
@@ -113,7 +113,7 @@ namespace HtmlToXml {
       /// entity sequence. On entry, tp should be
       /// pointing at '&amp;'.
       /// </summary>
-      private static bool EntityIsHexOrDecimal(TextParser tp) {
+      private static bool EntityIsHexOrDecimal(ITextParser tp) {
          // Handle hex and numeric
          if (tp.Peek(1) == '#') {
             var c = tp.Peek(2);

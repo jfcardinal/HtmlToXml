@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using HtmlToXml;
+using JohnCardinal.Text;
 
-namespace HtmlToXmlTest {
+namespace HtmlToXml.Test {
    [TestClass]
    public class HtmlToXmlTests {
       private static HtmlConverter htmlToXml;
@@ -16,6 +16,15 @@ namespace HtmlToXmlTest {
       public static void Test(string input, string expectedResult) {
          var actualResult = htmlToXml.Convert(input);
          Assert.AreEqual(expectedResult, actualResult);
+      }
+
+      public static void TestSB(string input, string expectedResult) {
+         var inputSb = new StringBuilder(input.Length);
+         inputSb.Append(input);
+         var html = new StringBuilderParser(inputSb);
+         var xml = new StringBuilder(input.Length * 2);
+         htmlToXml.Convert(html, xml);
+         Assert.AreEqual(expectedResult, xml.ToString());
       }
 
       [TestMethod, TestCategory("HtmlToXml")]
@@ -300,5 +309,12 @@ namespace HtmlToXmlTest {
          Test("<style>p > em { color:red; }</style>",
               "<style>/*<![CDATA[*/p > em { color:red; }/*]]>*/</style>");
       }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void StringBuilderTable() {
+         TestSB("<table><th>H1<td>C1<tbody><td>C2<th>H2",
+              "<table><th>H1</th><td>C1</td><tbody><td>C2</td><th>H2</th></tbody></table>");
+      }
+
    }
 }

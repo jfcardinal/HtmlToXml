@@ -133,16 +133,16 @@ namespace HtmlToXml {
       private ElementHandlerFactory handlers;
 
       /// <summary>
-      /// The <see cref="TextParser"/> instance used to parse the
+      /// The <see cref="ITextParser"/> instance used to parse the
       /// incoming HTML text.
       /// </summary>
-      private TextParser tp;
+      private ITextParser tp;
 
       /// <summary>
       /// The <see cref="StringBuilder"/> instance where the XML output
-      /// of <see cref="Convert"/> is assembled.
+      /// of <see cref="Converter"/> is assembled.
       /// </summary>
-      private StringBuilder sb;
+      private StringBuilder xml;
 
       /// <summary>
       /// Creates a new instance of <see cref="HtmlConverter"/>.
@@ -155,13 +155,32 @@ namespace HtmlToXml {
       /// <summary>
       /// Converts the HTML in <paramref name="htmlText"/> to XML.
       /// </summary>
+      /// <param name="htmlText">The HTML text to parse.</param>
       public string Convert(string htmlText) {
          if (String.IsNullOrEmpty(htmlText)) return htmlText;
          if (htmlText.IndexOfAny(restrictedCharacters) == -1) return htmlText;
 
          tp = new TextParser(htmlText);
-         sb = new StringBuilder(htmlText.Length);
+         xml = new StringBuilder(htmlText.Length);
+         Converter();
+         var result = xml.ToString();
+         xml = null;
+         return result;
+      }
 
+      /// <summary>
+      /// Converts the text read via the <paramref name="html"/>
+      /// and appends the XML to <paramref name="xml"/>.
+      /// </summary>
+      /// <param name="html">An <see cref="ITextParser"/> that provides the HTML text to parse.</param>
+      /// <param name="xml">A <see cref="StringBuilder"/> to which the XML is appended.</param>
+      public void Convert(ITextParser html, StringBuilder xml) {
+         tp = html;
+         this.xml = xml;
+         Converter();
+      }
+
+      private void Converter() {
          while (!tp.EndOfText) {
             var c = tp.Peek();
             switch (c) {
@@ -173,26 +192,22 @@ namespace HtmlToXml {
                   break;
 
                case '>':
-                  sb.Append("&gt;");
+                  xml.Append("&gt;");
                   tp.MoveAhead();
                   break;
 
                case '&':
-                  EntityConverter.Convert(tp, sb);
+                  EntityConverter.Convert(tp, xml);
                   break;
 
                default:
-                  sb.Append(c);
+                  xml.Append(c);
                   tp.MoveAhead();
                   break;
             }
          }
 
          CloseOpenElements(openElements.Count);
-
-         var result = sb.ToString();
-         sb = null;
-         return result;
       }
 
       /// <summary>
@@ -211,17 +226,17 @@ namespace HtmlToXml {
 
          ProcessHandlers(tag.Name);
 
-         sb.Append('<');
-         sb.Append(tag.Name);
-         sb.Append(tag.AttributesPart);
+         xml.Append('<');
+         xml.Append(tag.Name);
+         xml.Append(tag.AttributesPart);
          if (tag.IsSelfClosingTag) {
-            if (sb[sb.Length - 1] == ' ') sb.Length = sb.Length - 1;
-            sb.Append('/');
+            if (xml[xml.Length - 1] == ' ') xml.Length = xml.Length - 1;
+            xml.Append('/');
          }
          else {
             openElements.Push(tag.Name);
          }
-         sb.Append('>');
+         xml.Append('>');
 
          if (IsScriptCDataElement(tag.Name)) {
             SkipToEndOfScriptCData(tag.Name);
@@ -277,9 +292,9 @@ namespace HtmlToXml {
       /// </summary>
       private void PopElementAndClose() {
          var elementName = openElements.Pop();
-         sb.Append("</");
-         sb.Append(elementName);
-         sb.Append('>');
+         xml.Append("</");
+         xml.Append(elementName);
+         xml.Append('>');
       }
 
       /// <summary>
@@ -353,13 +368,13 @@ namespace HtmlToXml {
             }
             if (!haveCData) {
                haveCData = true;
-               sb.Append(kScriptCDataStart);
+               xml.Append(kScriptCDataStart);
             }
-            sb.Append(tp.Peek());
+            xml.Append(tp.Peek());
             tp.MoveAhead();
          }
 
-         if (haveCData) sb.Append(kScriptCDataEnd);
+         if (haveCData) xml.Append(kScriptCDataEnd);
          return;
       }
 
@@ -418,11 +433,11 @@ namespace HtmlToXml {
 
          /// <summary>
          /// Parses the text of an HTML tag and updates the <see cref="Name"/> and
-         /// <see cref="AttributesPart"/> properties. <see cref="TextParser"/>
+         /// <see cref="AttributesPart"/> properties. <see cref="ITextParser"/>
          /// <paramref name="tp"/> should be pointed at the '&lt;' character that
          /// starts an HTML tag.
          /// </summary>
-         public bool Parse(TextParser tp) {
+         public bool Parse(ITextParser tp) {
             if (tp.Peek() != '<') return false;
             tp.MoveAhead();
 
@@ -442,13 +457,13 @@ namespace HtmlToXml {
 
          /// <summary>
          /// Parses the element name from the tag using the given
-         /// <see cref="TextParser"/> <paramref name="tp"/>. The
-         /// <see cref="TextParser"/> position should be set to
+         /// <see cref="ITextParser"/> <paramref name="tp"/>. The
+         /// <see cref="ITextParser"/> position should be set to
          /// the first character of the tag following the "&lt;",
          /// or following the "&lt;/" for end tags.
          /// Returns true if a syntactically valid name is found.
          /// </summary>
-         private bool ParseName(TextParser tp) {
+         private bool ParseName(ITextParser tp) {
             const string nameCharacters = "abcdefghijklmnopqrstuvwxyz"
                + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:";
 
@@ -472,11 +487,11 @@ namespace HtmlToXml {
 
          /// <summary>
          /// Parses attributes from the tag using the given
-         /// <see cref="TextParser"/> <paramref name="tp"/>. The
-         /// <see cref="TextParser"/> position should be set to
+         /// <see cref="ITextParser"/> <paramref name="tp"/>. The
+         /// <see cref="ITextParser"/> position should be set to
          /// the first character of the tag following the element name.
          /// </summary>
-         private bool ParseAttributes(TextParser tp) {
+         private bool ParseAttributes(ITextParser tp) {
             const char kDoubleQuote = '"';
             const char kSingleQuote = '\'';
             const string kDoubleQuoteEntity = "&#22;";
