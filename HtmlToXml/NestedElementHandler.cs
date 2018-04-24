@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+
 using JohnCardinal.Utility;
 
 namespace HtmlToXml {
@@ -19,18 +20,18 @@ namespace HtmlToXml {
       public string Name { get; }
 
       public ElementHandlerResult AddChild(StackArray<string> openElements, string childName) {
-         if (!closers.Contains(childName)) return ElementHandlerResult.Continue;
+         if (Array.IndexOf(closers, childName) == -1) return ElementHandlerResult.Continue;
 
          for (var index = openElements.Count; index > 0; index--) {
             var openElement = openElements[index - 1];
-            if (parents.Contains(openElement)) {
+            if (Array.IndexOf(parents, openElement) != -1) {
                return ElementHandlerResult.Continue;
             }
             if (openElement.Equals(Name)) break;
          }
 
-         if (closers.Contains(childName)) {
-            if (peers.Contains(childName)) {
+         if (Array.IndexOf(closers, childName) != -1) {
+            if (Array.IndexOf(peers, childName) != -1) {
                return ElementHandlerResult.CloseElementAndBreak;
             }
             return ElementHandlerResult.CloseElement;
