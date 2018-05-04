@@ -314,9 +314,14 @@ namespace HtmlToXml {
             return null;
          }
 
+         var startPos = tp.Position;
          var htmlTag = new HtmlTag();
-         if (htmlTag.Parse(tp)) return htmlTag;
+         if (htmlTag.Parse(tp)) {
+            return htmlTag;
+         }
 
+         tp.MoveTo(startPos + 1);
+         xml.Append("&lt;");
          return null;
       }
 
@@ -468,15 +473,24 @@ namespace HtmlToXml {
                + "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:";
 
             var startPos = tp.Position;
-            while (!tp.EndOfText) {
-               var c = tp.Peek();
+
+            var offset = 0;
+            char c;
+            while ((c = tp.Peek(offset)) != TextParser.NullChar) {
                if (nameCharacters.IndexOf(c) == -1) break;
-               tp.MoveAhead();
+               offset++;
             }
 
-            var length = tp.Position - startPos;
-            if (length <= 0) return false;
+            // Did we get any valid characters?
+            if (offset < 1) return false;
 
+            // Does the tag name end properly?
+            if (c != '>' && c != ' ' && c != '/') return false;
+            if (tp.Peek(offset - 1) == ':') return false;
+
+            // Our minimal validation has passed...
+            tp.MoveAhead(offset);
+            var length = tp.Position - startPos;
             Name = tp.Substring(startPos, length).ToLower();
 
             // Force void elements to be self-closing tags.

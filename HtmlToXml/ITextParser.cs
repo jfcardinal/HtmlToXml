@@ -45,6 +45,12 @@
       void MoveAhead(int ahead);
 
       /// <summary>
+      /// Moves the current <see cref="Position"/> to the specified index.
+      /// </summary>
+      /// <param name="index">The new Position value.</param>
+      void MoveTo(int index);
+
+      /// <summary>
       /// Returns the character at the current position, 
       /// or a null character if the specified position is at the end of the
       /// text.

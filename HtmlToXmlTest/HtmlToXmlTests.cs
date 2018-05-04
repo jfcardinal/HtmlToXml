@@ -210,7 +210,7 @@ namespace HtmlToXml.Test {
       [TestMethod, TestCategory("HtmlToXml")]
       public void AnchorMissingGT() {
          Test("<div><a href=\"foo\"text</a></div>",
-              "<div></div>");
+              "<div>&lt;a href=\"foo\"text</div>");
       }
 
       [TestMethod, TestCategory("HtmlToXml")]
@@ -308,6 +308,12 @@ namespace HtmlToXml.Test {
       public void StyleWithCData() {
          Test("<style>p > em { color:red; }</style>",
               "<style>/*<![CDATA[*/p > em { color:red; }/*]]>*/</style>");
+      }
+
+      [TestMethod, TestCategory("HtmlToXml")]
+      public void IllegalTagNameHttp() {
+         Test("<http://www.example.com>",
+              "&lt;http://www.example.com&gt;");
       }
 
       [TestMethod, TestCategory("HtmlToXml")]

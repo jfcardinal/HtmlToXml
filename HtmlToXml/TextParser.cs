@@ -161,5 +161,18 @@ namespace JohnCardinal.Text {
       public void MoveAhead(int ahead) {
          pos = Math.Min(pos + ahead, text.Length);
       }
+
+      /// <summary>
+      /// Moves the current <see cref="Position"/> to the specified index.
+      /// </summary>
+      /// <param name="index">The new Position value.</param>
+      public void MoveTo(int index) {
+         if (index > 0) {
+            pos = Math.Min(index, text.Length);
+         }
+         else {
+            pos = text.Length;
+         }
+      }
    }
 }

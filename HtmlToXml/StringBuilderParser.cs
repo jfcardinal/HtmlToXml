@@ -104,6 +104,19 @@ namespace JohnCardinal.Text {
       }
 
       /// <summary>
+      /// Moves the current <see cref="Position"/> to the specified index.
+      /// </summary>
+      /// <param name="index">The new Position value.</param>
+      public void MoveTo(int index) {
+         if (index > 0) {
+            Position = Math.Min(index, sb.Length);
+         }
+         else {
+            Position = sb.Length;
+         }
+      }
+
+      /// <summary>
       /// Returns the character at the current position, 
       /// or a null character if the specified position is at the end of the
       /// text.
