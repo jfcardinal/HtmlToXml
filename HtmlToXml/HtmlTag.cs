@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 
 using JohnCardinal.Text;
@@ -8,6 +9,7 @@ namespace HtmlToXml {
       /// <summary>
       /// Nested class that represents the state of the current HTML tag.
       /// </summary>
+      [DebuggerDisplay("Name={Name}")]
       private sealed class HtmlTag {
          /// <summary>
          /// Gets the text between the element name and the end of the tag text. The
@@ -88,7 +90,7 @@ namespace HtmlToXml {
             if (offset < 1) return false;
 
             // Does the tag name end properly?
-            if (c != '>' && c != ' ' && c != '/') return false;
+            if (c != '>' && c != '/' && !Char.IsWhiteSpace(c)) return false;
             if (tp.Peek(offset - 1) == ':') return false;
 
             // Our minimal validation has passed...
