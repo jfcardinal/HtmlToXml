@@ -328,5 +328,32 @@ namespace HtmlToXml.Test {
               "<table><th>H1</th><td>C1</td><tbody><td>C2</td><th>H2</th></tbody></table>");
       }
 
+      [TestMethod, TestCategory("HtmlToXml.TagWithNewLine")]
+      public void TagWithUnixNewLine() {
+         var unixNewlinesInsideTag =
+               "  <div\n    attr1=\"x\"\n    attr2=\"y\"\n></div>";
+         Test(unixNewlinesInsideTag, unixNewlinesInsideTag);
+      }
+
+      [TestMethod, TestCategory("HtmlToXml.TagWithNewLine")]
+      public void TagWithWindowsNewLine() {
+         var windowsNewlinesInsideTag =
+               "  <div\r\n    attr1=\"x\"\r\n    attr2=\"y\"\r\n></div>";
+         Test(windowsNewlinesInsideTag, windowsNewlinesInsideTag);
+      }
+
+      [TestMethod, TestCategory("HtmlToXml.TagWithNewLine")]
+      public void ElementWithUnixNewLine() {
+         var htmlWithUnixNewlinesInsideElement =
+               "<div>\n  Element Text</div>";
+         Test(htmlWithUnixNewlinesInsideElement, htmlWithUnixNewlinesInsideElement);
+      }
+
+      [TestMethod, TestCategory("HtmlToXml.TagWithNewLine")]
+      public void ElementWithWindowsNewLine() {
+         var htmlWithWindowsNewlinesInsideElement =
+               "<div>\r\n  Element Text</div>";
+         Test(htmlWithWindowsNewlinesInsideElement, htmlWithWindowsNewlinesInsideElement);
+      }
    }
 }
