@@ -357,24 +357,21 @@ namespace HtmlToXml.Test {
       }
 
       [TestMethod, TestCategory("HtmlToXml.Entity")]
-      public void ParagraphWithQuotAndApos()
-      {
+      public void ParagraphWithQuotAndApos() {
          var paragraphWithQuotAndApos =
             "<p>&quot; and &apos;</p>";
          Test(paragraphWithQuotAndApos, paragraphWithQuotAndApos);
       }
 
       [TestMethod, TestCategory("HtmlToXml.Entity")]
-      public void AttributeWithQuotEntity()
-      {
+      public void AttributeWithQuotEntity() {
          var htmlWithQuotEntityInsideAttribute =
             "<div title=\"&quot;\"></div>";
          Test(htmlWithQuotEntityInsideAttribute, htmlWithQuotEntityInsideAttribute);
       }
 
       [TestMethod, TestCategory("HtmlToXml.Entity")]
-      public void AttributeWithAposEntity()
-      {
+      public void AttributeWithAposEntity() {
          var htmlWithAposEntityInsideAttribute =
             "<div title=\"&apos;\"></div>";
          Test(htmlWithAposEntityInsideAttribute, htmlWithAposEntityInsideAttribute);
