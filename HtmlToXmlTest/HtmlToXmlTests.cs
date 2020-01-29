@@ -355,5 +355,29 @@ namespace HtmlToXml.Test {
                "<div>\r\n  Element Text</div>";
          Test(htmlWithWindowsNewlinesInsideElement, htmlWithWindowsNewlinesInsideElement);
       }
+
+      [TestMethod, TestCategory("HtmlToXml.Entity")]
+      public void ParagraphWithQuotAndApos()
+      {
+         var paragraphWithQuotAndApos =
+            "<p>&quot; and &apos;</p>";
+         Test(paragraphWithQuotAndApos, paragraphWithQuotAndApos);
+      }
+
+      [TestMethod, TestCategory("HtmlToXml.Entity")]
+      public void AttributeWithQuotEntity()
+      {
+         var htmlWithQuotEntityInsideAttribute =
+            "<div title=\"&quot;\"></div>";
+         Test(htmlWithQuotEntityInsideAttribute, htmlWithQuotEntityInsideAttribute);
+      }
+
+      [TestMethod, TestCategory("HtmlToXml.Entity")]
+      public void AttributeWithAposEntity()
+      {
+         var htmlWithAposEntityInsideAttribute =
+            "<div title=\"&apos;\"></div>";
+         Test(htmlWithAposEntityInsideAttribute, htmlWithAposEntityInsideAttribute);
+      }
    }
 }
