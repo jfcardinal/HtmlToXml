@@ -130,13 +130,14 @@ namespace HtmlToXml {
       /// </summary>
       private static Dictionary<string, string> namedEnties = new Dictionary<string, string>() {
          { "amp", "&amp;" },
-         { "apos", "&#27;" },
+         { "apos", "&apos;" },
          { "gt", "&gt;" },
          { "lt", "&lt;" },
+         { "quot", "&quot;" },
+
          { "nbsp", "&#160;" },
          { "mdash", "&#8212;" },
          { "ndash", "&#8211;" },
-         { "quot", "&#22;" },
 
          { "Aacute", "&#193;" },
          { "aacute", "&#225;" },
